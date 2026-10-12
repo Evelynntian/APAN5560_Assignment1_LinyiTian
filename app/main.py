@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, Field
 
 from app.bigram_model import BigramModel
+from app.cnn_predict import predict_image
 from app.embedding_model import calculate_embedding
 
-app = FastAPI(title="Assignment 1 API")
+
+app = FastAPI(title="APAN5560 Assignments 1 and 2 API")
 
 corpus = [
     "The Count of Monte Cristo is a novel written by Alexandre Dumas. "
@@ -60,3 +63,20 @@ def get_embedding(
         "dimension": len(embedding),
         "embedding": embedding,
     }
+
+
+@app.post("/classify")
+def classify_image(file: UploadFile = File(...)):
+    try:
+        with Image.open(file.file) as image:
+            image.load()
+            rgb_image = image.convert("RGB")
+    except (UnidentifiedImageError, OSError, ValueError):
+        raise HTTPException(
+            status_code=400,
+            detail="Please upload a valid image, such as PNG or JPEG.",
+        )
+    finally:
+        file.file.close()
+
+    return predict_image(rgb_image)

@@ -1,13 +1,17 @@
 [project]
 name = "sps-genai"
 version = "0.1.0"
-description = "Add your description here"
+description = "APAN5560 FastAPI text generation, word embeddings, and CNN image classification"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "en-core-web-lg",
     "fastapi[standard]>=0.142.1",
+    "pillow>=12.3.0",
+    "python-multipart>=0.0.32",
     "spacy>=3.8.16",
+    "torch>=2.14.1",
+    "torchvision>=0.29.1",
 ]
 
 [project.scripts]
@@ -19,3 +23,10 @@ build-backend = "uv_build"
 
 [tool.uv.sources]
 en-core-web-lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl" }
+torch = { index = "pytorch-cpu", marker = "sys_platform == 'linux'" }
+torchvision = { index = "pytorch-cpu", marker = "sys_platform == 'linux'" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
